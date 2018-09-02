@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <vitasdkkern.h>
 #include <taihen.h>
 
 extern int module_get_export_func(SceUID pid, const char *modname, uint32_t libnid, uint32_t funcnid, uintptr_t *func);
@@ -33,20 +34,26 @@ static SceUID         close_id = -1;
 
 SceUID hook_user_open(const char *path, int flags, SceMode mode, void *args)
 {
+    int state;
+    ENTER_SYSCALL(state);
     char k_path[256];
     SceUID fd = TAI_CONTINUE(SceUID, open_ref, path, flags, mode, args);
     // Copy the user pointer to kernel space
     ksceKernelStrncpyUserToKernel(k_path, (uintptr_t)path, 256);
     // Log our call
     printf("sceIoOpen('%s') = 0x%08X\n", k_path, fd);
+    EXIT_SYSCALL(state);
     return fd;
 }
 
 int hook_user_close(SceUID fd)
 {
+    int state;
+    ENTER_SYSCALL(state);
     printf("sceIoClose(0x%08X) (Before TAI_CONTINUE)\n", fd);
     int r = TAI_CONTINUE(int, close_ref, fd);
     printf("r = 0x%08X (After TAI_CONTINUE)\n", r);
+    EXIT_SYSCALL(state);
     return r;
 }
 
