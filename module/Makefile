@@ -4,7 +4,8 @@ OBJS     = module.o
 LIBS = -ltaihen_stub -ltaihenForKernel_stub \
   -lSceSysmemForDriver_stub -lSceSysclibForDriver_stub \
   -lSceIofilemgrForDriver_stub -lSceModulemgrForKernel_stub \
-  -lSceCpuForDriver_stub -ltaihenModuleUtils_stub
+  -lSceCpuForDriver_stub -ltaihenModuleUtils_stub \
+  -lSceThreadmgrForDriver_stub 
 
 PREFIX  = arm-vita-eabi
 CC      = $(PREFIX)-gcc

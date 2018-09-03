@@ -50,9 +50,11 @@ int hook_user_close(SceUID fd)
 {
     int state;
     ENTER_SYSCALL(state);
-    printf("sceIoClose(0x%08X) (Before TAI_CONTINUE)\n", fd);
+    // The call to TAI_CONTINUE() below will crash the system!
+    // A workaround is to replace that call with the line commented below:
+    // int r = ksceIoClose(ksceKernelKernelUidForUserUid(ksceKernelGetProcessId(), fd));
     int r = TAI_CONTINUE(int, close_ref, fd);
-    printf("r = 0x%08X (After TAI_CONTINUE)\n", r);
+    printf("sceIoClose(0x%08X) = 0x%08X\n", fd, r);
     EXIT_SYSCALL(state);
     return r;
 }
